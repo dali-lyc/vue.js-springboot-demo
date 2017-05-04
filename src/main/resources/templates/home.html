@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>最强里程碑</title>
+    <link rel="shortcut icon" href="/milestone/img/favicon.ico" type="image/x-icon"/>
+    <link href="/milestone/css/common.css" rel="stylesheet"/>
+</head>
+<body>
+<p>用户姓名：<span th:text="${userInfo.username}"></span><a href="/milestone/oauth/logout">【退出】</a></p>
+<table>
+    <tr>
+        <td>编号</td>
+        <td>姓名</td>
+    </tr>
+    <tr th:each="user:${userList}">
+        <td th:text="${user.userId}"></td>
+        <td th:text="${user.userName}"></td>
+    </tr>
+</table>
+<img src="/milestone/img/login-picture.png"/>
+
+<script src="http://tccommon.17usoft.com/oauth/resources/js/sso.client.logout.min.js"></script>
+</body>
+</html>

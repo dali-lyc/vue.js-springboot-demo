@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ly.milestone.dao.IUserDao">
+    <resultMap id="userResultMap" type="User">
+        <id property="recId" column="rec_id" jdbcType="DECIMAL"/>
+        <result property="userId" column="user_id" jdbcType="DECIMAL"/>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"/>
+        <result property="sex" column="sex" jdbcType="VARCHAR"/>
+        <result property="address" column="address" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="isValid" column="is_valid" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <sql id="selectAllColumn">
+        rec_id, user_id, user_name, sex, address, create_time
+    </sql>
+    <sql id="condition">
+        <where>
+            <if test="condition != null">
+                <if test="condition.userId != null and condition.userId != ''">
+                    user_id like concat('%', #{condition.userId}, '%')
+                </if>
+                <if test="condition.userName != null and condition.userName != ''">
+                    and user_name like concat('%', #{condition.userName}, '%')
+                </if>
+                <if test="condition.sex != null and condition.sex != ''">
+                    and sex = #{condition.sex}
+                </if>
+                <if test="condition.address != null and condition.address != ''">
+                    and address like concat('%', #{condition.address}, '%')
+                </if>
+                <if test="condition.startTime != null and condition.startTime != '' and condition.endTime != null and condition.endTime != ''">
+                    and create_time between #{condition.startTime} and #{condition.endTime}
+                </if>
+            </if>
+            and is_valid = 1
+        </where>
+    </sql>
+
+    <select id="queryUserBySex" resultMap="userResultMap">
+        select <include refid="selectAllColumn"/>
+          from user
+         where sex = #{sex} and is_valid = 1
+    </select>
+
+    <select id="queryUserByUserId" resultMap="userResultMap">
+        select <include refid="selectAllColumn"/>
+          from user
+         where user_id = #{userId} and is_valid = 1
+    </select>
+
+    <select id="searchUserByPage" resultMap="userResultMap">
+        select <include refid="selectAllColumn"/>
+          from user
+         <include refid="condition"/>
+         limit #{from}, #{pageSize}
+    </select>
+
+    <select id="findTotalCountUsers" resultType="java.lang.Long">
+        select count(rec_id)
+        from user
+        <include refid="condition"/>
+    </select>
+
+    <insert id="insertUser">
+        insert into user
+          (user_id, user_name, sex, address)
+          values(#{userId}, #{userName}, #{sex}, #{address})
+    </insert>
+
+    <update id="delUser">
+        update user
+           set is_valid = 0
+         where rec_id = #{recId}
+    </update>
+
+    <select id="queryUserByRecId" resultMap="userResultMap">
+        select <include refid="selectAllColumn"/>
+        from user
+        where rec_id = #{recId} and is_valid = 1
+    </select>
+
+    <update id="editUserByRecId">
+        update user
+           set user_id = #{userId}, user_name = #{userName}, sex = #{sex}, address = #{address}
+         where rec_id = #{recId}
+    </update>
+</mapper>
